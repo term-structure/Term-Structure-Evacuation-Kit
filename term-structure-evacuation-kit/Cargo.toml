@@ -1,0 +1,34 @@
+[package]
+name = "term-structure-evacuation-kit"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "ts-evacu"
+path = "src/main.rs" # 指定主源文件的位置
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ts_poseidon = { path = "../ts_poseidon" }
+ts_merkle_tree = { path = "../ts_merkle_tree" }
+ts_state = { path = "../ts_state" }
+ts_tx = { path = "../ts_tx" }
+ts_retriever = { path = "../ts_retriever" }
+
+clap = "2.33.3"
+tokio = { version = "1", features = ["full"] }
+hex = "0.4.3"
+
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+ark-ff = { version = "0.4.0", default-features = false }
+ark-bn254 = { version = "0.4.0", default-features = false, features = [
+    "curve",
+] }
+
+num-bigint = { version = "0.4", features = ["rand"] }
+
+[dependencies.num-traits]
+version = "0.2"
+default-features = false

@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+members = [
+    "term-structure-evacuation-kit",
+    "ts_merkle_tree",
+    "ts_poseidon",
+    "ts_retriever",
+    "ts_state",
+    "ts_tx",
+]

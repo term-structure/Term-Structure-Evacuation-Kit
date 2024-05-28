@@ -1,0 +1,17 @@
+[package]
+name = "ts_retriever"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+web3 = "0.19.0"
+sha3 = "0.10.0"
+hex = "0.4.3"
+
+ethabi = "18.0.0"
+
+serde = { version = "1.0", features = ["derive"] }
+
+tokio = { version = "1", features = ["full"] }

@@ -1,0 +1,16 @@
+[package]
+name = "ts_poseidon"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ark-ff = { version = "0.4.0", default-features = false }
+ark-bn254 = { version = "0.4.0", default-features = false, features = [
+    "curve",
+] }
+
+[dependencies.num-traits]
+version = "0.2"
+default-features = false

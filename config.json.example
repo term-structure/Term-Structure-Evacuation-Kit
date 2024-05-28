@@ -1,0 +1,8 @@
+{
+    "ts_filename": "./state.tss",
+    "ts_contract_addr": "0x09E01425780094a9754B2bd8A3298f73ce837CF9",
+    "api_key": "your api key",
+    "api_link": "https://mainnet.infura.io/v3/",
+    "l2_genesis_l1_anchor_id": 19922269,
+    "max_parallel_calls": 8
+}

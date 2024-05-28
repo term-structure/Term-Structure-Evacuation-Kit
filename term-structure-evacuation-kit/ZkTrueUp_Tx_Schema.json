@@ -1,0 +1,596 @@
+{
+    "base_type": {
+        "req_type": 1,
+        "account_id": 4,
+        "token_id": 2,
+        "state_amount": 16,
+        "state_ratio": 4,
+        "hashed_pub_key": 20,
+        "tx_amount": 5,
+        "time": 4,
+        "tx_offset": 4,
+        "tx_ratio": 5,
+        "tx_id": 8
+    },
+    "transaction": [
+        {
+            "name": "noop",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                }
+            ]
+        },
+        {
+            "name": "register",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "account_id"
+                },
+                {
+                    "type": "hashed_pub_key",
+                    "symbol": "hashed_pub_key"
+                }
+            ]
+        },
+        {
+            "name": "deposit",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "account_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "deposit_token_id"
+                },
+                {
+                    "type": "state_amount",
+                    "symbol": "deposit_amt"
+                }
+            ]
+        },
+        {
+            "name": "forced_withdraw",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "account_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "withdraw_token_id"
+                },
+                {
+                    "type": "state_amount",
+                    "symbol": "withdraw_amt"
+                }
+            ]
+        },
+        {
+            "name": "transfer",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "sender_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "transfer_token_id"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "transfer_amt"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "receiver_id"
+                }
+            ]
+        },
+        {
+            "name": "withdraw",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "account_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "withdraw_token_id"
+                },
+                {
+                    "type": "state_amount",
+                    "symbol": "withdraw_amt"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "tx_fee_token_id"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "tx_fee_amt"
+                }
+            ]
+        },
+        {
+            "name": "auction_lend",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "lender_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "lending_token_id"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "lending_amt"
+                },
+                {
+                    "type": "state_ratio",
+                    "symbol": "fee_rate"
+                },
+                {
+                    "type": "state_ratio",
+                    "symbol": "default_matched_interest_rate"
+                },
+                {
+                    "type": "time",
+                    "symbol": "maturity_time"
+                },
+                {
+                    "type": "time",
+                    "symbol": "matched_time"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "primary_lend_min_fee_amt"
+                }
+            ]
+        },
+        {
+            "name": "auction_borrow",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "sender_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "collateral_token_id"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "collateral_amt"
+                },
+                {
+                    "type": "state_ratio",
+                    "symbol": "fee_rate"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "borrowing_amt"
+                },
+                {
+                    "type": "time",
+                    "symbol": "matched_time"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "primary_borrow_min_fee_amt"
+                }
+            ]
+        },
+        {
+            "name": "auction_start",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "tx_offset",
+                    "symbol": "borrower_tx_offset"
+                },
+                {
+                    "type": "state_ratio",
+                    "symbol": "ori_matched_interest"
+                }
+            ]
+        },
+        {
+            "name": "auction_match",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "tx_offset",
+                    "symbol": "lender_tx_offset"
+                }
+            ]
+        },
+        {
+            "name": "auction_end",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "borrow_account"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "collateral_token_id"
+                },
+                {
+                    "type": "state_amount",
+                    "symbol": "collateral_amt"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "debt_token_id"
+                },
+                {
+                    "type": "state_amount",
+                    "symbol": "debt_amt"
+                },
+                {
+                    "type": "time",
+                    "symbol": "matched_time"
+                },
+                {
+                    "type": "time",
+                    "symbol": "maturity"
+                }
+            ]
+        },
+        {
+            "name": "second_limit_order",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "sender_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "sell_token_id"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "sell_amt"
+                },
+                {
+                    "type": "state_ratio",
+                    "symbol": "fee0"
+                },
+                {
+                    "type": "state_ratio",
+                    "symbol": "fee1"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "buy_token_id"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "buy_amt"
+                },
+                {
+                    "type": "time",
+                    "symbol": "expired_time"
+                },
+                {
+                    "type": "time",
+                    "symbol": "matched_time"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "secondary_taker_min_fee_amt"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "secondary_maker_min_fee_amt"
+                }
+            ]
+        },
+        {
+            "name": "second_limit_start",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "tx_offset",
+                    "symbol": "taker_tx_offset"
+                }
+            ]
+        },
+        {
+            "name": "second_limit_exchange",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "tx_offset",
+                    "symbol": "maker_tx_offset"
+                }
+            ]
+        },
+        {
+            "name": "second_limit_end",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "time",
+                    "symbol": "matched_time"
+                }
+            ]
+        },
+        {
+            "name": "second_market_order",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "sender_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "sell_token_id"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "sell_amt"
+                },
+                {
+                    "type": "state_ratio",
+                    "symbol": "fee0"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "buy_token_id"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "buy_amt"
+                },
+                {
+                    "type": "time",
+                    "symbol": "expired_time"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "secondary_taker_min_fee_amt"
+                }
+            ]
+        },
+        {
+            "name": "second_market_exchange",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "tx_offset",
+                    "symbol": "maker_tx_offset"
+                }
+            ]
+        },
+        {
+            "name": "second_market_end",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "time",
+                    "symbol": "matched_time"
+                }
+            ]
+        },
+        {
+            "name": "admin_cancel",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "tx_id",
+                    "symbol": "tx_id"
+                }
+            ]
+        },
+        {
+            "name": "user_cancel",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "tx_id",
+                    "symbol": "tx_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "tx_fee_token_id"
+                },
+                {
+                    "type": "tx_amount",
+                    "symbol": "tx_fee_amt"
+                }
+            ]
+        },
+        {
+            "name": "increase_epoch",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                }
+            ]
+        },
+        {
+            "name": "create_bond_token",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "time",
+                    "symbol": "maturity"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "base_token_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "bond_token_id"
+                }
+            ]
+        },
+        {
+            "name": "redeem",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "sender_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "token_id"
+                },
+                {
+                    "type": "state_amount",
+                    "symbol": "amount"
+                }
+            ]
+        },
+        {
+            "name": "withdraw_fee",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "token_id"
+                },
+                {
+                    "type": "state_amount",
+                    "symbol": "amount"
+                }
+            ]
+        },
+        {
+            "name": "evacuation",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "sender_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "token_id"
+                },
+                {
+                    "type": "state_amount",
+                    "symbol": "amount"
+                }
+            ]
+        },
+        {
+            "name": "set_admin_ts_addr",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                }
+            ]
+        },
+        {
+            "name": "evacuation",
+            "params": [
+                {
+                    "type": "req_type",
+                    "symbol": "req_type"
+                },
+                {
+                    "type": "account_id",
+                    "symbol": "sender_id"
+                },
+                {
+                    "type": "token_id",
+                    "symbol": "token_id"
+                },
+                {
+                    "type": "state_amount",
+                    "symbol": "amount"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,21 @@
+[package]
+name = "ts_state"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ts_merkle_tree = { path = "../ts_merkle_tree" }
+ts_poseidon = { path = "../ts_poseidon" }
+ts_tx = { path = "../ts_tx" }
+
+ark-bn254 = { version = "0.4.0", default-features = false, features = [
+    "curve",
+] }
+
+num-bigint = { version = "0.4", features = ["rand"] }
+
+[dependencies.num-traits]
+version = "0.2"
+default-features = false
