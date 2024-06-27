@@ -16,6 +16,7 @@ pub struct Config {
     api_link: String,
     l2_genesis_l1_anchor_id: u64,
     max_parallel_calls: u64,
+    filter_batch_size: u64,
 }
 
 pub fn update_state(cfg: Config, end_block_id: Option<usize>) -> Result<(), String> {
@@ -41,6 +42,7 @@ pub fn update_state(cfg: Config, end_block_id: Option<usize>) -> Result<(), Stri
                 start_block_id as usize,
                 end_block_id,
                 cfg.max_parallel_calls as usize,
+                cfg.filter_batch_size as usize,
                 |l1_anchor_id, block| {
                     let mut state = ts_file.to_state()?;
                     let block_id = ts_file.block_count as usize;

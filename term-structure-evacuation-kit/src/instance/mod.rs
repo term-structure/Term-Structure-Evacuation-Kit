@@ -159,7 +159,13 @@ impl TsFile {
         l2_genesis_l1_anchor_id: Option<u64>,
         mut callbackfn: impl FnMut(&mut Self) -> Result<(), String>,
     ) -> Result<(), String> {
-        let mut ts_file = Self::open(filename, l2_genesis_l1_anchor_id)?;
+        let mut ts_file = Self::open(
+            filename,
+            match l2_genesis_l1_anchor_id {
+                Some(id) => Some(id - 1),
+                None => None,
+            },
+        )?;
         callbackfn(&mut ts_file)?;
         ts_file.close()?;
         Ok(())
