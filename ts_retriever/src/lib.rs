@@ -202,11 +202,7 @@ pub async fn retrieve(
 
     let mut queue = std::collections::VecDeque::<(TransactionId, u32)>::new();
     while current_executed_block_info.is_some() {
-        println!("Executed  {:?}", current_executed_block_info);
-        println!("Committed {:?}", current_committed_block_info);
         if slt(&current_executed_block_info, &current_committed_block_info)? {
-            println!("Executed");
-            println!("=====================");
             if let Some((_, executed_l2_block_id)) = &current_executed_block_info {
                 if queue.len() != 0 {
                     if let Some((tx_id, l2_block_id)) = queue.get(0) {
@@ -236,8 +232,6 @@ pub async fn retrieve(
             }
             current_executed_block_info = executed_envent_tracer.pop().await?;
         } else {
-            println!("Committed");
-            println!("=====================");
             if let Some((committed_tx_id, committed_l2_block_id)) = &current_committed_block_info {
                 if queue.len() == 0 {
                     queue.push_back((committed_tx_id.clone(), committed_l2_block_id.clone()));
