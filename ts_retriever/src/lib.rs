@@ -209,7 +209,6 @@ pub async fn retrieve(
                         if executed_l2_block_id.clone() > l2_block_id.clone() {
                             return Err("Loading block info failed - 1".to_string());
                         } else if executed_l2_block_id.clone() == l2_block_id.clone() {
-                            println!("HITT");
                             let semaphore_clone = semaphore.clone();
                             let tx_id = tx_id.clone();
                             futures.push_back(async move {
