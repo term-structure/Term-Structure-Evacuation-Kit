@@ -3,6 +3,8 @@ mod block;
 use std::sync::Arc;
 
 pub use block::Block;
+use block::ExecutedBlock;
+use ethabi::{decode, ParamType};
 use web3::{
     ethabi::{Contract, Token},
     futures::{stream::FuturesOrdered, StreamExt},
@@ -315,6 +317,7 @@ pub async fn retrieve_consume_data(
     api_key: &str,
     ts_contract_addr: &str,
     remaining_l1_req_count: usize,
+    filter_batch_size: usize,
 ) -> Result<Vec<String>, String> {
     let link = format!("{}{}", api_link, api_key);
     let http = web3::transports::Http::new(&link)
@@ -327,63 +330,67 @@ pub async fn retrieve_consume_data(
         .map_err(|_| "Loading contract address failed")
         .unwrap();
 
-    let deposit_event_signature = H256::from_slice(&keccak256(
-        "Deposit(address,address,uint32,address,uint16,uint128)",
-    ));
-    let register_event_signature = H256::from_slice(&keccak256(
-        "Registration(address,uint32,uint256,uint256,bytes20)",
-    ));
-    let force_withdraw_event_signature =
-        H256::from_slice(&keccak256("ForceWithdrawal(address,uint32,address,uint16)"));
+    let l1_req_event_signature =
+        H256::from_slice(&keccak256("L1Request(address,uint64,uint8,bytes,uint32)"));
 
     let latest_block = web3.eth().block_number().await.map_err(|e| e.to_string())?;
 
     let mut logs: Vec<Log> = Vec::new();
     let mut current_block = latest_block;
     while logs.len() < remaining_l1_req_count {
-        let from_block: BlockNumber = if current_block > 1000.into() {
-            (current_block - web3::types::U64::from(1000)).into()
+        let from_block: BlockNumber = if current_block > filter_batch_size.into() {
+            (current_block - web3::types::U64::from(filter_batch_size)).into()
         } else {
             BlockNumber::Earliest
         };
 
         let filter = FilterBuilder::default()
             .address(vec![contract_address])
-            .topics(
-                Some(vec![
-                    deposit_event_signature,
-                    register_event_signature,
-                    force_withdraw_event_signature,
-                ]),
-                None,
-                None,
-                None,
-            )
+            .topics(Some(vec![l1_req_event_signature]), None, None, None)
             .from_block(from_block)
             .to_block(current_block.into())
             .build();
 
-        let new_logs = web3.eth().logs(filter).await.map_err(|e| e.to_string())?;
+        let mut new_logs = web3.eth().logs(filter).await.map_err(|e| e.to_string())?;
+        new_logs.reverse();
         logs.extend(new_logs);
 
-        if current_block > 2000.into() {
-            current_block = current_block - web3::types::U64::from(2001);
+        if current_block > filter_batch_size.into() {
+            current_block = current_block - web3::types::U64::from(filter_batch_size + 1);
         } else {
             break;
         }
     }
-
-    logs.sort_by(|a, b| b.block_number.cmp(&a.block_number));
     let latest_logs = logs
         .into_iter()
         .take(remaining_l1_req_count)
         .collect::<Vec<Log>>();
 
-    let result = latest_logs
+    let mut result: Vec<String> = latest_logs
         .iter()
-        .map(|log| hex::encode(&log.data.0))
-        .collect::<Vec<String>>();
+        .map(|log| {
+            let param_types = vec![
+                ParamType::Uint(64),
+                ParamType::Uint(8),
+                ParamType::Bytes,
+                ParamType::Uint(32),
+            ];
 
+            let tokens = decode(&param_types, &log.data.0)
+                .map_err(|e| format!("Error decoding log: {:?}", e))?;
+
+            let pub_data = match &tokens[2] {
+                Token::Bytes(data) => data.clone(),
+                _ => return Err("Error decoding log: unexpected token type".to_string()),
+            };
+
+            Ok(hex::encode(pub_data))
+        })
+        .collect::<Result<Vec<String>, String>>()?;
+
+    retrieve_last_excuted_block(api_link, api_key, ts_contract_addr, filter_batch_size).await?;
+
+    result.reverse();
     Ok(result)
 }
 
@@ -460,14 +467,92 @@ pub async fn get_remaining_l1_req_count(
         .await
         .map_err(|e| e.to_string())?;
 
-    let committed_l1_req_count: u64 = result.0[..8]
+    let executed_l1_req_count: u64 = result.0[32..64]
         .iter()
-        .rev()
         .fold(0, |acc, &x| acc * 256 + x as u64);
-    let executed_l1_req_count: u64 = result.0[8..16]
+    let total_l1_req_count: u64 = result.0[64..96]
         .iter()
-        .rev()
         .fold(0, |acc, &x| acc * 256 + x as u64);
 
-    Ok((committed_l1_req_count - executed_l1_req_count) as usize)
+    Ok((total_l1_req_count - executed_l1_req_count) as usize)
+}
+
+pub async fn retrieve_last_excuted_block(
+    api_link: &str,
+    api_key: &str,
+    ts_contract_addr: &str,
+    filter_batch_size: usize,
+) -> Result<String, String> {
+    let link = format!("{}{}", api_link, api_key);
+    let http = web3::transports::Http::new(&link)
+        .map_err(|e| e.to_string())
+        .unwrap();
+    let web3 = web3::Web3::new(http);
+
+    let contract_address: H160 = ts_contract_addr
+        .parse()
+        .map_err(|_| "Loading contract address failed")
+        .unwrap();
+
+    let l1_req_event_signature = H256::from_slice(&keccak256("BlockExecution(uint32)"));
+
+    let latest_block = web3.eth().block_number().await.map_err(|e| e.to_string())?;
+
+    let mut logs: Vec<Log> = Vec::new();
+    let mut current_block = latest_block;
+    while logs.len() == 0 {
+        let from_block: BlockNumber = if current_block > filter_batch_size.into() {
+            (current_block - web3::types::U64::from(filter_batch_size)).into()
+        } else {
+            BlockNumber::Earliest
+        };
+
+        let filter = FilterBuilder::default()
+            .address(vec![contract_address])
+            .topics(Some(vec![l1_req_event_signature]), None, None, None)
+            .from_block(from_block)
+            .to_block(current_block.into())
+            .build();
+
+        logs = web3.eth().logs(filter).await.map_err(|e| e.to_string())?;
+
+        if current_block > filter_batch_size.into() {
+            current_block = current_block - web3::types::U64::from(filter_batch_size + 1);
+        } else {
+            break;
+        }
+    }
+    let last_log = logs.last().ok_or("No logs found")?;
+    let tx_hash = last_log.transaction_hash.unwrap();
+
+    // Fetch the transaction using its hash
+    let transaction = web3
+        .eth()
+        .transaction(web3::types::TransactionId::Hash(tx_hash))
+        .await
+        .map_err(|e| e.to_string())?
+        .ok_or("Transaction not found")?;
+
+    // Decode the transaction's calldata
+    let calldata = transaction.input.0;
+
+    // Decode the calldata as a vector of ExecuteBlock
+    let execute_block_tokens = decode(
+        &[ParamType::Array(Box::new(ParamType::Tuple(vec![
+            ParamType::Uint(32),                          // blockNumber
+            ParamType::Uint(64),                          // l1RequestNum
+            ParamType::FixedBytes(32),                    // pendingRollupTxHash
+            ParamType::FixedBytes(32),                    // commitment
+            ParamType::FixedBytes(32),                    // stateRoot
+            ParamType::Uint(256),                         // timestamp
+            ParamType::Array(Box::new(ParamType::Bytes)), // pendingRollupTxPubData
+        ])))],
+        &calldata[4..],
+    )
+    .map_err(|e| e.to_string())?;
+
+    let executed_block =
+        ExecutedBlock::from_token(&execute_block_tokens[0]).ok_or("Loading block failed")?;
+
+    Ok(format!("{}", executed_block))
 }

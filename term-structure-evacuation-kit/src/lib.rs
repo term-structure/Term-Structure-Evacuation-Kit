@@ -2,7 +2,9 @@ use instance::TsFile;
 use num_bigint::BigUint;
 use serde::{Deserialize, Serialize};
 use ts_merkle_tree::{MerkleTree, MerkleTreeWithLeaves};
-use ts_retriever::{get_remaining_l1_req_count, retrieve, retrieve_consume_data};
+use ts_retriever::{
+    get_remaining_l1_req_count, retrieve, retrieve_consume_data, retrieve_last_excuted_block,
+};
 use ts_state::{constants::TX_COUNT_PER_BLOCK, Array, Value};
 use ts_tx::{parser::Schema, Tx};
 
@@ -245,8 +247,24 @@ pub fn get_consume_data(cfg: Config) -> Result<Vec<String>, String> {
             cfg.api_key.as_str(),
             cfg.ts_contract_addr.as_str(),
             remaining_l1_req_count,
+            cfg.filter_batch_size as usize,
         ))
         .map_err(|e| e.to_string())?;
 
     Ok(consume_data)
+}
+
+pub fn get_last_excuted_block(cfg: Config) -> Result<String, String> {
+    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
+
+    let data = rt
+        .block_on(retrieve_last_excuted_block(
+            cfg.api_link.as_str(),
+            cfg.api_key.as_str(),
+            cfg.ts_contract_addr.as_str(),
+            cfg.filter_batch_size as usize,
+        ))
+        .map_err(|e| e.to_string())?;
+
+    Ok(data)
 }

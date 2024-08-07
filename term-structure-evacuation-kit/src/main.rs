@@ -1,6 +1,8 @@
 extern crate term_structure_evacuation_kit;
 use clap::{App, Arg, SubCommand};
-use term_structure_evacuation_kit::{get_consume_data, get_evacu_prf, query_funds, update_state, Config};
+use term_structure_evacuation_kit::{
+    get_consume_data, get_evacu_prf, get_last_excuted_block, query_funds, update_state, Config,
+};
 
 fn main() {
     let matches = App::new("ts-evacu")
@@ -85,6 +87,18 @@ fn main() {
         .subcommand(
             SubCommand::with_name("consume")
                 .about("Exports the data required to consume L1 requests in the smart contract")
+                .arg(
+                    Arg::with_name("config")
+                        .short("c")
+                        .long("config")
+                        .takes_value(true)
+                        .required(true)
+                        .help("Sets a custom config file"),
+                ),
+        )
+        .subcommand(
+            SubCommand::with_name("last_block")
+                .about("Exports the info of the last block")
                 .arg(
                     Arg::with_name("config")
                         .short("c")
@@ -232,6 +246,22 @@ fn main() {
                 Ok(json) => println!("{}", json),
                 Err(e) => eprintln!("[Error] Failed to export the data: {}", e),
             },
+            Err(e) => eprintln!("[Error] Failed to export the data: {}", e),
+        }
+    }
+
+    if let Some(matches) = matches.subcommand_matches("last_block") {
+        let config_path = matches.value_of("config").unwrap_or("default_path");
+        let config = match load_config(config_path) {
+            Ok(cfg) => cfg,
+            Err(e) => {
+                eprintln!("[Error] Failed to load config: {}", e);
+                return;
+            }
+        };
+
+        match get_last_excuted_block(config) {
+            Ok(data) => println!("{}", data),
             Err(e) => eprintln!("[Error] Failed to export the data: {}", e),
         }
     }

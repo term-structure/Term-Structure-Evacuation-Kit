@@ -43,13 +43,13 @@ To export the input files required for the evacuation zk proof, use the `export`
 ts-evacu export -c config.json -a 2 -t 2 > ./input.json
 ```
 
-<!-- ### Consume Data
+### Consume Data
 
 To export the data required to consume L1 requests in the smart contract, use the `consume` command with the configuration file:
 
 ```bash
 ts-evacu consume -c config.json
-``` -->
+```
 
 ## Generating Zero-Knowledge Proofs
 
